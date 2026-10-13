@@ -1052,6 +1052,17 @@ ddev mariadb -udb -pdb
 echo 'SHOW TABLES;' | ddev mariadb
 ```
 
+## `mcp`
+
+Run a read-only [MCP server](mcp.md) on standard input and output, so AI clients can list and describe projects, read container logs, and list database snapshots. Clients normally start it themselves.
+
+Example:
+
+```shell
+# Register the server with Claude Code
+claude mcp add ddev -- ddev mcp
+```
+
 ## `mutagen`
 
 Commands for [Mutagen](../install/performance.md#mutagen) status and sync, etc.

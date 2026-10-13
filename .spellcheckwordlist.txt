@@ -121,6 +121,7 @@ Magerun
 Manage
 MariaDB
 Matthias
+MCP
 MinIO
 MODX
 Misconfigured

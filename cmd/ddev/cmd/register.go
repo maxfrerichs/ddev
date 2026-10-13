@@ -58,6 +58,7 @@ func RegisterCommands() {
 	registerImportFilesCmd()
 	registerListCmd()
 	registerLogsCmd()
+	registerMcpCmd()
 	registerMutagenLogsCmd()
 	registerMutagenMonitorCmd()
 	registerMutagenResetCmd()
