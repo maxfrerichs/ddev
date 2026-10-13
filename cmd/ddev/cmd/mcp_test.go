@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"os/exec"
+	"strings"
 	"testing"
 	"time"
 
@@ -15,7 +16,23 @@ import (
 // TestMcpServesOnlyProtocolOnStdout starts the real binary because stdout
 // purity depends on process-level state that an in-process test cannot cover.
 func TestMcpServesOnlyProtocolOnStdout(t *testing.T) {
-	c := exec.Command(DdevBin, "mcp")
+	for _, tc := range []struct {
+		args  []string
+		tools int
+	}{
+		{[]string{"mcp"}, 8},
+		{[]string{"mcp", "--allow-write"}, 13},
+		{[]string{"mcp", "--allow-exec"}, 10},
+		{[]string{"mcp", "--allow-write", "--allow-exec"}, 15},
+	} {
+		t.Run(strings.Join(tc.args, " "), func(t *testing.T) {
+			testMcpProtocol(t, tc.args, tc.tools)
+		})
+	}
+}
+
+func testMcpProtocol(t *testing.T, args []string, wantTools int) {
+	c := exec.Command(DdevBin, args...)
 	var stderr bytes.Buffer
 	c.Stderr = &stderr
 	stdin, err := c.StdinPipe()
@@ -71,7 +88,7 @@ func TestMcpServesOnlyProtocolOnStdout(t *testing.T) {
 		}
 	}
 
-	require.Len(t, responses[2].Result.Tools, 5)
+	require.Len(t, responses[2].Result.Tools, wantTools)
 	require.True(t, responses[3].Result.IsError, "an unknown project must be a tool error, not a dead server")
 	require.False(t, responses[4].Result.IsError, "the server must still answer after a failing call")
 
